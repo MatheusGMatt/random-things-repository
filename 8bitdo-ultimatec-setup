@@ -1,0 +1,43 @@
+Create a file called with any name and index ".sh". After that, select "properties", then paste the following
+#!/bin/bash -e
+
+# Setup some aliases for tracing the commands used in this script
+shopt -s expand_aliases
+alias trace_on="set -x"
+alias trace_off="{ set +x; } 2>/dev/null"
+
+# Disale the readonly file system to install new software
+echo "Disabling steamos-readonly..."
+trace_on
+sudo steamos-readonly disable
+trace_off
+
+echo "Installing dependencies and 8bitdo-ultimate-controller-udev package..."
+trace_on
+sudo pacman-key --init
+sudo pacman-key --populate archlinux
+sudo pacman -Sy
+sudo pacman -Syu --noconfirm --overwrite \* base-devel git
+
+# Check if yay is installed
+if ! command -v yay &>/dev/null; then
+  # Install yay
+  cd /opt
+  rm -fr yay-bin/
+  git clone https://aur.archlinux.org/yay-bin.git
+  cd yay-bin/
+  makepkg -si --noconfirm
+  cd /opt
+  rm -rf yay-bin/
+fi
+
+yay --noconfirm -Syu 8bitdo-ultimate-controller-udev
+trace_off
+
+echo "Re-enabling readonly mode..."
+trace_on
+sudo steamos-readonly enable
+trace_off
+
+echo
+echo "Setup complete! You can close this window"
