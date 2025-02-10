@@ -1,4 +1,4 @@
-Create a file called with any name and index ".sh". After that, select "properties", then paste the following
+Create a file called by any name and index ".sh". After that, select "properties", then paste the following
 #!/bin/bash -e
 
 # Setup some aliases for tracing the commands used in this script
